@@ -70,8 +70,20 @@ namespace data::endian {
         ordered<X, o>() : Value{0} {}
         ordered<X, o>(X x) : Value{x} {}
         
+        constexpr static order opposite = o == order::little ? order::big : order::little;
+        
+        ordered<X, o>& operator=(X x) {
+            Value = native<X, o>::from(x.Value); 
+            return *this;
+        }
+        
         ordered<X, o>& operator=(ordered<X, o>& x) {
             Value = x.Value; 
+            return *this;
+        }
+        
+        ordered<X, o>& operator=(ordered<X, opposite>& x) {
+            Value = boost::endian::endian_reverse(x.Value); 
             return *this;
         }
         
